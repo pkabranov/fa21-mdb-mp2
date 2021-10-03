@@ -11,6 +11,7 @@ export default function MovieDetailScreen({ route }) {
           /* TODO: Configure this screen to have an image and appropriate text describing the movie. 
                 See the example on the spec for design inspiration.
                 Feel free to use the styles below. */
+          
           <Text style={styles.text}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
