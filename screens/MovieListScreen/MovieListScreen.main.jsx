@@ -15,11 +15,11 @@ export default function MovieListScreen({ navigation, route }) {
 
   // TODO: Fill out the methods below.
   const selectedMovie = (movieItem) => {
-    navigation.navigate("About This Movie", { item: movieItem });
+    navigation.navigate("MovieDetails", { item: movieItem });
   };
 
   const selectedFilterButton = () => {
-    navigation.navigate({ name: "MovieFilter", params: { actors: actors } });
+    navigation.navigate("MovieFilter", { actors: actors });
   };
 
   useEffect(() => {
@@ -28,12 +28,7 @@ export default function MovieListScreen({ navigation, route }) {
     // variable as a parameter.
     navigation.setOptions({
       headerRight: () => (
-        <Button
-          onPress={() => {
-            selectedFilterButton(actors);
-          }}
-          title="Filter"
-        />
+        <Button onPress={selectedFilterButton} title="Filter" />
       ),
     });
   }, [
@@ -46,13 +41,13 @@ export default function MovieListScreen({ navigation, route }) {
           See https://reactnavigation.org/docs/params/#passing-params-to-a-previous-screen
           for an example of how to send data BACKWARDS in the navigation stack.
       */
-    if (route.params?.post) {
-      setActors(route.params?.post);
+    if (route.params?.actors) {
+      setActors(route.params.actors);
     }
   }, [
     /* TODO: Insert dependencies here. What variable changes 
         when we come back from the filter screen? */
-    route.params?.post,
+    route,
   ]);
 
   // Renders a row of the FlatList.
@@ -68,15 +63,18 @@ export default function MovieListScreen({ navigation, route }) {
     };
 
     // TODO: Set up search & filter criteria.
-    let meetsSearchCriteria = true;
-    let meetsActorsCriteria = true;
+    let meetsSearchCriteria = item.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    let meetsActorsCriteria =
+      actors.length == 0 || overlapFound(actors, item.actors);
 
     if (meetsSearchCriteria && meetsActorsCriteria) {
       // TODO: Return a MovieCell, wrapped by a TouchableOpacity so we can handle taps.
       return (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("MovieDetails", item);
+            selectedMovie(item);
           }}
         >
           <MovieCell movieItem={item} />
@@ -97,10 +95,11 @@ export default function MovieListScreen({ navigation, route }) {
                 The third-party package should already be installed for you. */}
       {/* TODO: Add a FlatList: https://reactnative.dev/docs/flatlist */}
       <SearchBar
-        placeholder="Find your favorite movie"
+        placeholder="Search for a movie"
         onChangeText={setSearch}
         value={search}
         lightTheme={true}
+        platform={"ios"}
       />
       <FlatList
         data={TABLE_DATA}
